@@ -1,0 +1,36 @@
+<configuration>
+	<!-- Console Appender -->
+	<appender name="ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} -
+				Request UUID: %X{requestUUID} - Message: %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<property name="LOG_PATH" value="./logs" />
+	<SpringProperty scope="context" name="SPRING_APPLICATION_NAME"
+		source="spring.application.name" />
+	<!-- Rolling File Appender -->
+	<appender name="RollingFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}/${SPRING_APPLICATION_NAME}.log</file>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- The file name pattern for rolling files -->
+			<fileNamePattern>
+				${LOG_PATH}/${SPRING_APPLICATION_NAME}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+			<!-- Max size for each log file -->
+			<maxFileSize>100MB</maxFileSize>
+			<!-- Keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+			<!-- Total size cap for the logs -->
+			<totalSizeCap>1GB</totalSizeCap>
+		</rollingPolicy>
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+	</appender>
+
+	<root level="info">
+		<appender-ref ref="ConsoleAppender" />
+		<appender-ref ref="RollingFile" />
+	</root>
+</configuration>
